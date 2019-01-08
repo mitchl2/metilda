@@ -9,6 +9,7 @@ import {Redirect} from "react-router-dom";
 import PitchArt from "./PitchArt";
 import {controls, Media, Player} from 'react-media-player';
 import PitchArtDrawingWindow from "./PitchArtDrawingWindow";
+import RecordRTC from "recordrtc/RecordRTC";
 
 const {PlayPause, MuteUnmute, SeekBar} = controls;
 
@@ -69,12 +70,15 @@ class TranscribeAudio extends Component {
         this.pitchArtClicked = this.pitchArtClicked.bind(this);
         this.imageIntervalToTimeInterval = this.imageIntervalToTimeInterval.bind(this);
         this.timeCoordToImageCoord = this.timeCoordToImageCoord.bind(this);
+        this.toggleRecord = this.toggleRecord.bind(this);
 
         // 94 quarter tones below A4
         this.minVertPitch = 30.0;
 
         // 11 quarter tones above A4
         this.maxVertPitch = 604.53;
+
+        this.recordRTC = null;
     }
 
     static formatImageUrl(uploadId, maxPitch, tmin, tmax) {
@@ -127,6 +131,34 @@ class TranscribeAudio extends Component {
                 });
             });
     }
+
+    toggleRecord() {
+        let controller = this;
+        function successCallback(audioStream) {
+            console.log("Started recording");
+            controller.recordRTC = RecordRTC(audioStream, {type: 'audio'});
+            controller.recordRTC.startRecording();
+        }
+
+        function errorCallback(error) {
+            // maybe another application is using the device
+            console.log("failed to get audio");
+            console.log(error);
+        }
+
+        if (this.recordRTC !== null) {
+            this.recordRTC.stopRecording(function (audioURL) {
+                console.log("Ended recording");
+                let recordedBlob = controller.recordRTC.getBlob();
+                console.log(recordedBlob);
+                controller.recordRTC = null;
+            });
+        } else {
+            var mediaConstraints = {audio: true};
+            navigator.mediaDevices.getUserMedia(mediaConstraints).then(successCallback).catch(errorCallback);
+        }
+    }
+
 
     audioIntervalSelectionCanceled() {
         this.setState({minSelectX: -1, maxSelectX: -1});
@@ -432,6 +464,10 @@ class TranscribeAudio extends Component {
                                 <button className="waves-effect waves-light btn"
                                         onClick={this.pitchArtClicked}
                                         disabled={!isSelectionActive}>Pch
+                                </button>
+                                <button className="waves-effect waves-light btn"
+                                        onClick={this.toggleRecord}>
+                                    Rec
                                 </button>
                             </div>
                             <div>
