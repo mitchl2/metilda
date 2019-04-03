@@ -1,0 +1,4 @@
+/* Overrides default menu appearance */
+.react-contexify {
+    z-index: 1000;
+}

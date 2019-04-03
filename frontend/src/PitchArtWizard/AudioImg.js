@@ -4,6 +4,10 @@ import $ from "jquery";
 import '../Lib/imgareaselect/css/imgareaselect-default.css';
 import * as ImgAreaSelect from '../Lib/imgareaselect/scripts/jquery.imgareaselect.js';
 import "./GlobalStyling.css";
+import {MenuProvider} from "react-contexify";
+import AudioImgContextMenu from "./AudioImgContextMenu";
+import { contextMenu } from 'react-contexify';
+import "./AudioImg.css";
 
 class AudioImg extends Component {
     state = {};
@@ -55,7 +59,14 @@ class AudioImg extends Component {
         let imgObj = $el.imgAreaSelect({
             instance: true,
             handles: true,
+            resizable: false,
+            movable: false,
+            zIndex: 0,
             onInit: function () {
+                $(".imgareaselect-selection, .imgareaselect-border1, .imgareaselect-border2, .imgareaselect-border3, .imgareaselect-border4, .imgareaselect-outer").contextmenu(function(e) {
+                    e.preventDefault();
+                    contextMenu.show({id: "audio-img-menu", event: e});
+                });
                 audioImage.setState({isLoaded: true}, function () {
                     imgObj.setOptions({minHeight: $el.height()});
                 });
@@ -137,9 +148,14 @@ class AudioImg extends Component {
     render() {
         const {src} = this.props;
         return (
-            <img id="metilda-audio-analysis-image"
-                 className={"metilda-audio-analysis-image " + (this.state.isLoaded ? "" : "hide")}
-                 src={src}/>
+            <div>
+                <MenuProvider id="audio-img-menu">
+                    <img id="metilda-audio-analysis-image"
+                         className={"metilda-audio-analysis-image " + (this.state.isLoaded ? "" : "hide")}
+                         src={src}/>
+                </MenuProvider>
+                <AudioImgContextMenu selectInterval={this.props.selectInterval}/>
+            </div>
         );
     }
 }

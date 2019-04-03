@@ -561,7 +561,8 @@ class TranscribeAudio extends React.Component<Props, State> {
                                                 minAudioX={this.state.minAudioX}
                                                 maxAudioX={this.state.maxAudioX}
                                                 minAudioTime={this.state.minAudioTime}
-                                                maxAudioTime={this.state.maxAudioTime}/>
+                                                maxAudioTime={this.state.maxAudioTime}
+                                                selectInterval={this.averagePitchArtClicked}/>
                                             : []
                                     }
                                 </div>

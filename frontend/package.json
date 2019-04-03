@@ -28,6 +28,7 @@
     "moment": "^2.24.0",
     "query-string": "^6.4.0",
     "react": "^16.5.2",
+    "react-contexify": "^4.0.2",
     "react-dom": "^16.5.2",
     "react-konva": "^16.5.2",
     "react-media-player": "^0.7.5",
@@ -45,9 +46,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "pretest": "tslint -p tsconfig.json -c tslint.json src/**/*.{ts,tsx}",
+    "tslint": "tslint -p tsconfig.json -c tslint.json src/**/*.{ts,tsx}",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "npm run tslint && react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
